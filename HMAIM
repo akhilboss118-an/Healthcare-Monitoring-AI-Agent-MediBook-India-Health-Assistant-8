@@ -1,0 +1,47 @@
+import streamlit as st
+import pandas as pd
+from langchain.chat_models import ChatOpenAI # or your preferred model
+from langchain.agents import initialize_agent, Tool
+
+# 1. Page Configuration
+st.set_page_config(page_title="Healthcare AI Agent", layout="wide")
+st.title("🩺 Healthcare Personal Assistant")
+
+# 2. Mock Data/Database Setup (Replace with SQLite integration)
+if 'meds' not in st.session_state:
+    st.session_state.meds = pd.DataFrame(columns=["Medication", "Time"])
+
+# 3. Define Tools
+def get_medication_reminder(query):
+    # Logic to interface with your DB
+    return "Your next dose is scheduled for 8:00 AM."
+
+tools = [
+    Tool(
+        name="MedicationTracker",
+        func=get_medication_reminder,
+        description="Useful for when you need to check medication schedules."
+    )
+]
+
+# 4. User Interface
+st.sidebar.header("Health Dashboard")
+menu = st.sidebar.radio("Navigation", ["Chat", "Medication Tracker", "Analytics"])
+
+if menu == "Chat":
+    user_input = st.text_input("Ask a health question:")
+    if user_input:
+        # Here you would trigger your LangChain Agent
+        st.write("AI Response: [Insert Logic Here]")
+
+elif menu == "Medication Tracker":
+    st.subheader("Manage Medications")
+    med_name = st.text_input("Medicine Name")
+    time = st.time_input("Reminder Time")
+    if st.button("Add Reminder"):
+        # Logic to append to database
+        st.success(f"Reminder set for {med_name}")
+
+# 5. Safety Disclaimer
+st.sidebar.markdown("---")
+st.sidebar.warning("Disclaimer: This tool is for informational purposes only and is not a substitute for professional medical advice[cite: 229].")
